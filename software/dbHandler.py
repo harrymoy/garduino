@@ -6,7 +6,8 @@ class dbHandler():
 
 	def getAll(self):
 		list = []
-		for row in cur.execute("SELECT * FROM GARDEN"):
+		for row in cur.execute("SELECT TIME, SOIL_MOISTURE, AIR_QUALITY, LIGHT, HUMIDITY, TEMPERATURE FROM GARDEN"):
+			print row
 			list.append(row)
 			return list
 
