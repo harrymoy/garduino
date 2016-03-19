@@ -1,25 +1,25 @@
-from BaseHTTPServer import BaseHTTPRequestHandler,HTTPServer
+from Flask import flask, request, Response
+from pymongo import MongoClient
 
-from dbHandler import dbHandler
+app = Flask(__name__)
+client = MongoClient()
 
-PORT_NUMBER = 8080
-
-class myHandler(BaseHTTPRequestHandler):
-	#Handle GET requests
-	def do_GET(self):
-		try:
-			self.send_response(200)
-			self.send_header('Content-Type', 'text/html')
-			self.end_headers()
-			x = dbHandler()
-			z = x.getAll()
-			self.wfile.write(z)
-		except:
-			self.send_error(404)
-
-try:
-	server = HTTPServer(('', PORT_NUMBER), myHandler)
-	server.serve_forever()
-
-except KeyboardInterrupt:
-	server.socket.close()
+@app.route('/data', methods=['GET'])
+def getData():
+	soil = request.params.get('soil')
+	air = request.params.get('air')
+	humidity = request.params.get('humidity')
+	temp = request.params.get('temp')
+	light = request.params.get('light')
+	if soil:
+		return soil
+	elif air:
+		return air
+	elif humidity:
+		return humidity
+	elif temp:
+		return temp
+	elif light:
+		return light
+	else:
+		return else
