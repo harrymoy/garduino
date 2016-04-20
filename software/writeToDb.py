@@ -1,11 +1,12 @@
 import serial
-import sqlite3 as sqlite
+from pymongo import MongoClient
 import json
 from time import gmtime, strftime
 
 ser = serial.Serial('/dev/cu.usbmodem1421', 9600) #Getting connection to Serial port
-conn = sqlite.connect('soil.db') #Accessing Database
-cur = conn.cursor() #Allowing us to do stuff to database
+client = MongoClient()
+db = client.garduino
+garden = db.garden
 
 try: #Using try in case of errors
 	while True: #Ensuring it's constantly looping
@@ -23,11 +24,9 @@ try: #Using try in case of errors
 				temperature = data['Temperature']
 				light = data['Lux']
 
-				dataList = [timeStamp, soilMoisture, airQuality, humidity, temperature, light] #Putting parsed JSON data into a list
-				
-				# Executing the query
-				cur.execute('INSERT INTO GARDEN VALUES (?, ?, ?, ?, ?, ?)', dataList) #Executing SQL query, ? represents placeholder values, the nth item in list goes into the corresponding nth placeholder
-				conn.commit() #Saving changes to database
+				data = {"Time": timeStamp, "Soil Moisture": soilMoisture, "Air Quality": airQuality, "Humidity": humidity, "Temperature": temperature, "Light": light}
+				insertion = db.garden.insert_one(data)
+
 except Exception, e:
 	print "Serial closed"
 	print e

@@ -1,25 +1,22 @@
-from Flask import flask, request, Response
 from pymongo import MongoClient
+from flask import Flask, request, jsonify, Response
+import json
 
 app = Flask(__name__)
 client = MongoClient()
+db = client.garduino
+garden = db.garden
 
 @app.route('/data', methods=['GET'])
 def getData():
-	soil = request.params.get('soil')
-	air = request.params.get('air')
-	humidity = request.params.get('humidity')
-	temp = request.params.get('temp')
-	light = request.params.get('light')
-	if soil:
-		return soil
-	elif air:
-		return air
-	elif humidity:
-		return humidity
-	elif temp:
-		return temp
-	elif light:
-		return light
-	else:
-		return else
+	cur = db.garden.find({}, {'_id': False})
+	itemList = []
+	for item in cur:
+		print item
+		itemList.append(item)
+	result = jsonify({'results': itemList})
+	resp = app.make_response(resp)
+	return resp
+
+if __name__ == '__main__':
+    app.run()
